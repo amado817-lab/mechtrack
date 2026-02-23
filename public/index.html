@@ -150,9 +150,7 @@
             try {
                 const response = await fetch('https://mechtrack-nytq.onrender.com/api/lookup', {
                     method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ vin, mileage })
-                });
+                    );
                 
                 const data = await response.json();
                 
