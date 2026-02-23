@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-require('dotenv').config();
+require('dotenv').config();console.log('API KEY loaded:', process.env.ANTHROPIC_API_KEY ? 'YES' : 'NO');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
