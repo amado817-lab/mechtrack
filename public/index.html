@@ -175,7 +175,18 @@
         }
         
         function displaySchedule(data, vin, mileage) {
-    document.getElementById('vehicleInfo').innerHTML = `
+   document.getElementById('scheduleItems').innerHTML = itemsHtml;
+
+if (data.sources) {
+    const sourcesHtml = `
+        <div style="margin-top: 20px; font-size: 0.85em; color: #777;">
+            <strong>Sources:</strong> ${data.sources.join(', ')}
+        </div>
+    `;
+    document.getElementById('scheduleItems').innerHTML += sourcesHtml;
+}
+
+document.getElementById('schedule').style.display = 'block';
         <strong>${data.vehicle.year} ${data.vehicle.make} ${data.vehicle.model}</strong><br>
         VIN: ${vin}<br>
         Current Mileage: ${parseInt(mileage).toLocaleString()} miles
