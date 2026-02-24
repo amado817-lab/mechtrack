@@ -159,7 +159,7 @@
                     return;
                 }
                 
-                displaySchedule(data);
+                displaySchedule(data, vin, mileage);
             } catch (err) {
                 showError('Error: ' + err.message);
             } finally {
@@ -167,11 +167,11 @@
             }
         }
         
-        function displaySchedule(data) {
-            document.getElementById('vehicleInfo').innerHTML = `
-                <strong>${data.vehicle.year} ${data.vehicle.make} ${data.vehicle.model}</strong><br>
-                VIN: ${data.vehicle.vin}<br>
-                Current Mileage: ${data.mileage.toLocaleString()} miles
+        function displaySchedule(data, vin, mileage) {
+    document.getElementById('vehicleInfo').innerHTML = `
+        <strong>${data.vehicle.year} ${data.vehicle.make} ${data.vehicle.model}</strong><br>
+        VIN: ${vin}<br>
+        Current Mileage: ${parseInt(mileage).toLocaleString()} miles
             `;
             
             const itemsHtml = data.schedule.map(item => {
