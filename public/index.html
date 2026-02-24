@@ -175,19 +175,21 @@
             `;
             
             const itemsHtml = data.schedule.map(item => {
-                let className = 'schedule-item';
-                if (data.mileage > item.mileage) className += ' overdue';
-                else if (data.mileage > item.mileage * 0.8) className += ' due-soon';
-                else className += ' up-to-date';
-                
-                return `
-                    <div class="${className}">
-                        <strong>${item.service}</strong><br>
-                        Due at: ${item.mileage.toLocaleString()} miles
-                        ${data.mileage > item.mileage ? '<br><span style="color: #e74c3c;">⚠️ OVERDUE</span>' : ''}
-                    </div>
-                `;
-            }).join('');
+    const dueMileage = item.intervalMiles;
+    let className = 'schedule-item';
+    if (mileage > dueMileage) className += ' overdue';
+    else if (mileage > dueMileage * 0.8) className += ' due-soon';
+    else className += ' up-to-date';
+    
+    return `
+        <div class="${className}">
+            <strong>${item.name}</strong><br>
+            ${item.description}<br>
+            Due every: ${dueMileage.toLocaleString()} miles / ${item.intervalMonths} months
+            ${mileage > dueMileage ? '<br><span style="color: #e74c3c;">⚠️ OVERDUE</span>' : ''}
+        </div>
+    `;
+}).join('');
             
             document.getElementById('scheduleItems').innerHTML = itemsHtml;
             document.getElementById('schedule').style.display = 'block';
