@@ -80,3 +80,5 @@ Include all standard services: oil change, tire rotation, air filter, cabin filt
 app.listen(PORT, () => {
   console.log(`✅ MechTrack server running on port ${PORT}`);
 });
+Also include a "sources" field in your JSON response like this:
+"sources": ["Mitchell 1 OEM specifications", "manufacturer owner's manual intervals", "NHTSA guidelines"]
