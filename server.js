@@ -46,9 +46,9 @@ app.get('/api/lookup', async (req, res) => {
       messages: [{
         role: 'user',
         content: `You are an expert automotive technician. Generate the complete OEM maintenance schedule for a ${vehicleDesc}.
-
 Return ONLY valid JSON in this exact format, no markdown, no explanation:
 {
+  "sources": ["source1", "source2"],
   "schedule": [
     {
       "id": "oil_change",
@@ -60,17 +60,14 @@ Return ONLY valid JSON in this exact format, no markdown, no explanation:
     }
   ]
 }
-
-Include all standard services: oil change, tire rotation, air filter, cabin filter, spark plugs, brake fluid, coolant flush, transmission fluid, serpentine belt, timing belt check, battery, brake inspection. Use realistic OEM intervals for this exact vehicle.`
+Include all standard services: oil change, tire rotation, air filter, cabin filter, spark plugs, brake fluid, coolant flush, transmission fluid, serpentine belt, timing belt check, battery, brake inspection. Use realistic OEM intervals for this exact vehicle. Include 2-3 sources in the sources array.`
       }]
     });
 
     let rawText = message.content[0].text;
     rawText = rawText.replace(/\`\`\`json\n?/g, '').replace(/\`\`\`\n?/g, '').trim();
-    const { schedule } = JSON.parse(rawText);
-
-    res.json({ vehicle: { year, make, model, trim, engine, cylinders, driveType, bodyClass }, schedule });
-
+    const { schedule, sources } = JSON.parse(rawText);
+res.json({ vehicle: { year, make, model, trim, engine, cylinders, driveType, bodyClass }, schedule, sources });
   } catch (err) {
     console.error('Lookup error:', err);
     res.status(500).json({ error: 'Something went wrong. Please try again.' });
