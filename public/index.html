@@ -164,7 +164,14 @@
                 showError('Error: ' + err.message);
             } finally {
                 document.getElementById('loading').style.display = 'none';
-            }
+            }if (data.sources) {
+    const sourcesHtml = `
+        <div style="margin-top: 20px; font-size: 0.85em; color: #777;">
+            <strong>Sources:</strong> ${data.sources.join(', ')}
+        </div>
+    `;
+    document.getElementById('scheduleItems').innerHTML += sourcesHtml;
+}
         }
         
         function displaySchedule(data, vin, mileage) {
