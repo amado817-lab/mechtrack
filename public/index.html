@@ -102,24 +102,29 @@
             border-radius: 6px;
             margin: 20px 0;
         }
+        .sources {
+            margin-top: 20px;
+            font-size: 0.85em;
+            color: #777;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>🚗 MacTrack</h1>
-        
+
         <div class="form-group">
             <label for="vin">Vehicle VIN (17 characters)</label>
             <input type="text" id="vin" placeholder="e.g., 1HGBH41JXMN109186" maxlength="17">
         </div>
-        
+
         <div class="form-group">
             <label for="mileage">Current Mileage</label>
             <input type="number" id="mileage" placeholder="e.g., 45000" min="0">
         </div>
-        
+
         <button onclick="lookupVehicle()">Look Up Vehicle</button>
-        
+
         <div id="loading" class="loading" style="display: none;">Loading...</div>
         <div id="error" class="error" style="display: none;"></div>
         <div id="schedule" class="schedule" style="display: none;">
@@ -132,87 +137,78 @@
         async function lookupVehicle() {
             const vin = document.getElementById('vin').value.trim().toUpperCase();
             const mileage = parseInt(document.getElementById('mileage').value);
-            
+
             if (vin.length !== 17) {
                 showError('VIN must be 17 characters');
                 return;
             }
-            
+
             if (isNaN(mileage) || mileage < 0) {
                 showError('Please enter a valid mileage');
                 return;
             }
-            
+
             document.getElementById('loading').style.display = 'block';
             document.getElementById('error').style.display = 'none';
             document.getElementById('schedule').style.display = 'none';
-            
+
             try {
                 const response = await fetch(
-  `https://mechtrack-nytq.onrender.com/api/lookup?vin=${encodeURIComponent(vin)}&mileage=${encodeURIComponent(mileage)}`
-);
-                
+                    `https://mechtrack-nytq.onrender.com/api/lookup?vin=${encodeURIComponent(vin)}&mileage=${encodeURIComponent(mileage)}`
+                );
+
                 const data = await response.json();
-                
+
                 if (!response.ok) {
                     showError(data.error || 'Failed to lookup vehicle');
                     return;
                 }
-                
+
                 displaySchedule(data, vin, mileage);
             } catch (err) {
                 showError('Error: ' + err.message);
             } finally {
                 document.getElementById('loading').style.display = 'none';
-            }if (data.sources) {
-    const sourcesHtml = `
-        <div style="margin-top: 20px; font-size: 0.85em; color: #777;">
-            <strong>Sources:</strong> ${data.sources.join(', ')}
-        </div>
-    `;
-    document.getElementById('scheduleItems').innerHTML += sourcesHtml;
-}
+            }
         }
-        
+
         function displaySchedule(data, vin, mileage) {
-   document.getElementById('scheduleItems').innerHTML = itemsHtml;
-
-if (data.sources) {
-    const sourcesHtml = `
-        <div style="margin-top: 20px; font-size: 0.85em; color: #777;">
-            <strong>Sources:</strong> ${data.sources.join(', ')}
-        </div>
-    `;
-    document.getElementById('scheduleItems').innerHTML += sourcesHtml;
-}
-
-document.getElementById('schedule').style.display = 'block';
-        <strong>${data.vehicle.year} ${data.vehicle.make} ${data.vehicle.model}</strong><br>
-        VIN: ${vin}<br>
-        Current Mileage: ${parseInt(mileage).toLocaleString()} miles
+            document.getElementById('vehicleInfo').innerHTML = `
+                <strong>${data.vehicle.year} ${data.vehicle.make} ${data.vehicle.model}</strong><br>
+                VIN: ${vin}<br>
+                Current Mileage: ${parseInt(mileage).toLocaleString()} miles
             `;
-            
+
             const itemsHtml = data.schedule.map(item => {
-    const dueMileage = item.intervalMiles;
-    let className = 'schedule-item';
-    if (mileage > dueMileage) className += ' overdue';
-    else if (mileage > dueMileage * 0.8) className += ' due-soon';
-    else className += ' up-to-date';
-    
-    return `
-        <div class="${className}">
-            <strong>${item.name}</strong><br>
-            ${item.description}<br>
-            Due every: ${dueMileage.toLocaleString()} miles / ${item.intervalMonths} months
-            ${mileage > dueMileage ? '<br><span style="color: #e74c3c;">⚠️ OVERDUE</span>' : ''}
-        </div>
-    `;
-}).join('');
-            
-            document.getElementById('scheduleItems').innerHTML = itemsHtml;
+                const dueMileage = item.intervalMiles;
+                let className = 'schedule-item';
+                if (mileage > dueMileage) className += ' overdue';
+                else if (mileage > dueMileage * 0.8) className += ' due-soon';
+                else className += ' up-to-date';
+
+                return `
+                    <div class="${className}">
+                        <strong>${item.name}</strong><br>
+                        ${item.description}<br>
+                        Due every: ${dueMileage.toLocaleString()} miles / ${item.intervalMonths} months
+                        ${mileage > dueMileage ? '<br><span style="color: #e74c3c;">⚠️ OVERDUE</span>' : ''}
+                    </div>
+                `;
+            }).join('');
+
+            let sourcesHtml = '';
+            if (data.sources && data.sources.length) {
+                sourcesHtml = `
+                    <div class="sources">
+                        <strong>Sources:</strong> ${data.sources.join(', ')}
+                    </div>
+                `;
+            }
+
+            document.getElementById('scheduleItems').innerHTML = itemsHtml + sourcesHtml;
             document.getElementById('schedule').style.display = 'block';
         }
-        
+
         function showError(message) {
             document.getElementById('error').style.display = 'block';
             document.getElementById('error').textContent = message;
