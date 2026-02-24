@@ -42,7 +42,7 @@ app.get('/api/lookup', async (req, res) => {
 
     const message = await client.messages.create({
       model: 'claude-haiku-4-5-20251001',
-      max_tokens: 1024,
+      max_tokens: 4096,
       messages: [{
         role: 'user',
         content: `You are an expert automotive technician. Generate the complete OEM maintenance schedule for a ${vehicleDesc}.
